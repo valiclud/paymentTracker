@@ -19,7 +19,7 @@ public class Main {
 	private static final Logger LOG = Logger.getLogger(Main.class.getName());
 
 	public static void main(String[] args) {
-		new DisplayTimer(6);
+		new DisplayTimer(60);
 		Scanner in = new Scanner(System.in);
 		System.out.println("Please enter the payement in format \"Currrency Amount\" or filename to upload");
 		System.out.println("For quit please enter \"quit\"");
