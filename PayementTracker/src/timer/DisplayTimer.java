@@ -1,10 +1,13 @@
 package timer;
 
 import java.awt.Toolkit;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import dto.Payement;
 import processing.ProcessPayement;
 
 /**
@@ -27,10 +30,10 @@ public class DisplayTimer {
 	class RemindTask extends TimerTask {
 		public void run() {
 
-			Map<String, Integer> payements = ProcessPayement.getInstance().getPayements();
+			Map<String, Payement> payements = ProcessPayement.getInstance().getPayements();
 
-			for (Map.Entry<String, Integer> entry : payements.entrySet()) {
-				System.out.println(entry.getKey() + " " + entry.getValue());
+			for (Payement payement : payements.values()) {
+				System.out.println(payement.getCurrencyName() + " " + payement.getCurrencyAmount());
 			}
 		}
 	}

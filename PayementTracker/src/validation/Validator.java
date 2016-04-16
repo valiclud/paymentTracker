@@ -6,13 +6,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Currency;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
+import dto.Payement;
 import exception.ApplicationException;
+import processing.ProcessPayement;
 
 /**
  * Validator class to validate input data.
+ * 
  * @author Ludvik Valicek - March 9 2016
  *
  */
@@ -35,13 +39,14 @@ public class Validator {
 	}
 
 	private static final Logger LOG = Logger.getLogger(Validator.class.getName());
-	
-	private String[][] fileContent = null;
-	String[][] parts = new String[16][16];
+
+	private Boolean fileContent = null;
 
 	/**
 	 * Validate file.
-	 * @param String filename
+	 * 
+	 * @param String
+	 *            filename
 	 * @return boolean
 	 */
 	public synchronized boolean validateFile(String filename) throws ApplicationException {
@@ -49,12 +54,12 @@ public class Validator {
 		File file = new File(filename);
 
 		if (!file.exists()) {
-			LOG.severe("File \"" +filename + "\" does not exist");
+			LOG.severe("File \"" + filename + "\" does not exist");
 			return false;
 		}
 
 		fileContent = this.validateParseFile(file);
-		
+
 		if (fileContent == null) {
 			return false;
 		}
@@ -64,7 +69,9 @@ public class Validator {
 
 	/**
 	 * Validate currency.
-	 * @param String[] currency
+	 * 
+	 * @param String[]
+	 *            currency
 	 * @return boolean
 	 */
 	public synchronized boolean validateCurrency(String[] currency) {
@@ -86,103 +93,86 @@ public class Validator {
 
 	/**
 	 * Parse and Validate file.
-	 * @param File file
+	 * 
+	 * @param File
+	 *            file
 	 * @return String[][]
-	 * @throws ApplicationException 
+	 * @throws ApplicationException
 	 */
-	private String[][] validateParseFile(File file) throws ApplicationException {
-
+	private Boolean validateParseFile(File file) throws ApplicationException {
+		String[][] parts = new String[2][4];
 		int row = 0;
 		int col = 0;
 		BufferedReader bufRdr = null;
+		Payement payement = null;
 		try {
 			bufRdr = new BufferedReader(new FileReader(file));
 			bufRdr.mark(1000);
 			String line = null;
 			StringTokenizer st = null;
-			
-			if (bufRdr.readLine() == null) {
-				String err = " Empty file:  " + file.getName();
-				LOG.severe("validateParseFile(File file) - " + err); 
+
+			if (!this.validateEmptyFile(bufRdr, file))
 				return null;
-			}
-				bufRdr.reset();
-			
+
 			while ((line = bufRdr.readLine()) != null) {
 				st = new StringTokenizer(line, " ");
 				col = 0;
 				while (st.hasMoreTokens()) {
-					parts[row][col] = st.nextToken().trim();
+					parts[0][col] = st.nextToken().trim();
 					col++;
-					 if (col > 2) {
-					 LOG.severe("There are more than 2 values on row: "+ (row+1) +" - non valid input file");
-					 return null;
-					 }
+					if (col > 2) {
+						LOG.severe("There are more than 2 values on row: " + (row + 1) + " - non valid input file");
+						return null;
+					}
 				}
-				if(this.validateCurrency(parts[row]) == false) {
-					 LOG.severe("Wrong values on row: "+ (row+1) +" - non valid input file");
-					 return null;
+				if (this.validateCurrency(parts[0]) == false) {
+					LOG.severe("Wrong values on row: " + (row + 1) + " - non valid input file");
+					return null;
 				}
 				row++;
-				if (row >=parts.length) {
-					parts = this.enlargeArray(parts, row);
-				}
+				payement = new Payement(parts[0][0], Integer.valueOf(parts[0][1]));
+				ProcessPayement.getInstance().processFromLine(payement);
+				payement = null;
 			}
 			bufRdr.close();
+		} catch (NumberFormatException ex) {
+			String err = " NumberFormatException:  " + file.getName() + "on row: " + row;
+			LOG.severe("validateParseFile(File file) - " + err + ex);
+			throw new ApplicationException(err);
 		} catch (FileNotFoundException ex) {
-			String err = " FileNotFoundException:  " + file.getName();
-			LOG.severe("validateParseFile(File file) - " + err + ex); 
+			String err = " FileNotFoundException:  " + file.getName() + "on row: " + row;
+			LOG.severe("validateParseFile(File file) - " + err + ex);
 			throw new ApplicationException(err);
 		} catch (Exception ee) {
-			String err = " Exception:  " + file.getName();
-			LOG.severe("validateParseFile(File file) - " + err + ee); 
+			String err = " Exception:  " + file.getName() + " on row: " + row + " " + ee.getMessage();
+			LOG.severe("validateParseFile(File file) - " + err + ee.getStackTrace());
 			throw new ApplicationException(err);
-		}finally {
+		} finally {
 			try {
 				bufRdr.close();
 			} catch (IOException e) {
 				String err = " IOException:  " + file.getName();
-				LOG.severe("validateParseFile(File file) - " + err + e); 
+				LOG.severe("validateParseFile(File file) - " + err + e);
 				throw new ApplicationException(err);
 			}
-	    }
-		
-		return parts;
-
-	}
-	
-	/**
-	 * Enlarge and copy array.
-	 * @param String[][] array, int size
-	 * @return String[][]
-	 */
-	private String[][] enlargeArray(String[][] array, int size){
-		String[][] tempArray = new String [size*2] [2];
-		
-		for (int i = 0; i<array.length; i++){
-		     for (int j = 0; j<array[i].length; j++){
-		    	 tempArray [i][j] = array[i][j];
-		     } 
 		}
-		return tempArray;
+		return true;
 	}
 
 	/**
-	 * Getter for file content.
+	 * Validate the file for emptiness.
+	 * 
 	 * @param void
 	 * @return String[][]
 	 */
-	public String[][] getFileContent() {
-		return fileContent;
-	}
-
-	/**
-	 * Setter for file content.
-	 * @param String[][] fileContent
-	 * @return void
-	 */
-	public void setFileContent(String[][] fileContent) {
-		this.fileContent = fileContent;
+	private boolean validateEmptyFile(BufferedReader bufRdr, File file) throws IOException {
+		if (bufRdr.readLine() == null) {
+			String err = " Empty file:  " + file.getName();
+			LOG.severe("validateParseFile(File file) - " + err);
+			return false;
+		}
+		bufRdr.reset();
+		return true;
 	}
 
 }

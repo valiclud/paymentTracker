@@ -1,10 +1,12 @@
 package processing;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import validation.Validator;
+import dto.Payement;
 
 /**
  * ProcessPayement class to process payment of application PayementTracker.
@@ -30,7 +32,7 @@ public class ProcessPayement {
 		return instance;
 	}
 
-	private Map<String, Integer> payements = new HashMap<String, Integer>();
+	private Map<String, Payement> payements = new HashMap<String, Payement>();
 
 	private static final Logger LOG = Logger.getLogger(ProcessPayement.class.getName());
 
@@ -41,37 +43,21 @@ public class ProcessPayement {
 	 *            currency
 	 * @return void
 	 */
-	public synchronized void processFromLine(String[] currency) {
+	public void processFromLine(Payement payement) {
+		int sum = 0;
 
-		if (payements.containsKey(currency[0])) {
-			Integer i = payements.get(currency[0]);
-			i = i + Integer.valueOf(currency[1]);
+		if (payements.containsKey(payement.getCurrencyName())) {
+			Payement alreadyPaid = payements.get(payement.getCurrencyName());
+			sum = alreadyPaid.getCurrencyAmount() + payement.getCurrencyAmount();
+			alreadyPaid.setCurrencyAmount(sum);
 
-			if (i.equals(0))
-				payements.remove(currency[0]);
+			if (sum == 0)
+				payements.remove(payement.getCurrencyName());
 			else
-				payements.put(currency[0], i);
+				payements.put(alreadyPaid.getCurrencyName(), alreadyPaid);
 
 		} else {
-			payements.put(currency[0], Integer.valueOf(currency[1]));
-		}
-	}
-
-	/**
-	 * Process file of payements.
-	 * 
-	 * @param String[][]
-	 *            currency
-	 * @return void
-	 */
-	public synchronized void processFromFile(String[][] currencies) {
-
-		for (int j = 0; j < currencies.length; j++) {
-
-			if (currencies[j][0] == null)
-				return;
-
-			this.processFromLine(currencies[j]);
+			payements.put(payement.getCurrencyName(), payement);
 		}
 	}
 
@@ -79,20 +65,19 @@ public class ProcessPayement {
 	 * Getter for payements.
 	 * 
 	 * @param void
-	 * @return Map<String, Integer>
+	 * @return Map<String,Payement>
 	 */
-	public synchronized Map<String, Integer> getPayements() {
+	public synchronized Map<String, Payement> getPayements() {
 		return payements;
 	}
 
 	/**
 	 * Setter for payements.
 	 * 
-	 * @param Map<String,
-	 *            Integer>
+	 * @param Map<String,Payement>
 	 * @return void
 	 */
-	public synchronized void setPayements(Map<String, Integer> payements) {
+	public synchronized void setPayements(Map<String, Payement> payements) {
 		this.payements = payements;
 	}
 
