@@ -31,6 +31,7 @@ public class SimpleView {
 
 		String input = in.nextLine();
 
+		
 		try {
 
 			while (!input.equals("quit")) {
