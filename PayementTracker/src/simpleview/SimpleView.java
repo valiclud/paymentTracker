@@ -1,3 +1,4 @@
+
 package simpleview;
 
 import java.util.Scanner;
@@ -8,10 +9,20 @@ import exception.ApplicationException;
 import processing.ProcessPayement;
 import validation.Validator;
 	
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SimpleView.
+ *
+ * @author: Ludvik Valicek
+ */
 public class SimpleView {
 
+	/** The Constant LOG. */
 	private static final Logger LOG = Logger.getLogger(SimpleView.class.getName());
 
+	/**
+	 * Run view.
+	 */
 	public void runView() {
 
 		Scanner in = new Scanner(System.in);

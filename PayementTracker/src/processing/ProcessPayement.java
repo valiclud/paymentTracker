@@ -1,3 +1,4 @@
+
 package processing;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.logging.Logger;
 
 import dto.Payement;
 
+// TODO: Auto-generated Javadoc
 /**
  * ProcessPayement class to process payment of application PayementTracker.
  * 
@@ -16,11 +18,20 @@ import dto.Payement;
  */
 public class ProcessPayement {
 
+	/** The instance. */
 	private static ProcessPayement instance = null;
 
+	/**
+	 * Instantiates a new process payement.
+	 */
 	private ProcessPayement() {
 	}
 
+	/**
+	 * Gets the single instance of ProcessPayement.
+	 *
+	 * @return single instance of ProcessPayement
+	 */
 	public static ProcessPayement getInstance() {
 		if (instance == null) {
 			synchronized (ProcessPayement.class) {
@@ -32,15 +43,16 @@ public class ProcessPayement {
 		return instance;
 	}
 
+	/** The payements. */
 	private Map<String, Payement> payements = new HashMap<String, Payement>();
 
+	/** The Constant LOG. */
 	private static final Logger LOG = Logger.getLogger(ProcessPayement.class.getName());
 
 	/**
 	 * Process one line of payment.
-	 * 
-	 * @param String[]
-	 *            currency
+	 *
+	 * @param payement the payement
 	 * @return void
 	 */
 	public void processFromLine(Payement payement) {
@@ -63,8 +75,7 @@ public class ProcessPayement {
 
 	/**
 	 * Getter for payements.
-	 * 
-	 * @param void
+	 *
 	 * @return Map<String,Payement>
 	 */
 	public synchronized Map<String, Payement> getPayements() {
@@ -73,8 +84,8 @@ public class ProcessPayement {
 
 	/**
 	 * Setter for payements.
-	 * 
-	 * @param Map<String,Payement>
+	 *
+	 * @param payements the payements
 	 * @return void
 	 */
 	public synchronized void setPayements(Map<String, Payement> payements) {

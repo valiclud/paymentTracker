@@ -1,3 +1,4 @@
+
 package validation;
 
 import java.io.BufferedReader;
@@ -14,6 +15,7 @@ import dto.Payement;
 import exception.ApplicationException;
 import processing.ProcessPayement;
 
+// TODO: Auto-generated Javadoc
 /**
  * Validator class to validate input data.
  * 
@@ -22,11 +24,20 @@ import processing.ProcessPayement;
  */
 public class Validator {
 
+	/** The instance. */
 	private static Validator instance = null;
 
+	/**
+	 * Instantiates a new validator.
+	 */
 	private Validator() {
 	}
 
+	/**
+	 * Gets the single instance of Validator.
+	 *
+	 * @return single instance of Validator
+	 */
 	public static Validator getInstance() {
 		if (instance == null) {
 			synchronized (Validator.class) {
@@ -38,16 +49,18 @@ public class Validator {
 		return instance;
 	}
 
+	/** The Constant LOG. */
 	private static final Logger LOG = Logger.getLogger(Validator.class.getName());
 
+	/** The file content. */
 	private Boolean fileContent = null;
 
 	/**
 	 * Validate file.
-	 * 
-	 * @param String
-	 *            filename
+	 *
+	 * @param filename the filename
 	 * @return boolean
+	 * @throws ApplicationException the application exception
 	 */
 	public synchronized boolean validateFile(String filename) throws ApplicationException {
 
@@ -69,9 +82,8 @@ public class Validator {
 
 	/**
 	 * Validate currency.
-	 * 
-	 * @param String[]
-	 *            currency
+	 *
+	 * @param currency the currency
 	 * @return boolean
 	 */
 	public synchronized boolean validateCurrency(String[] currency) {
@@ -93,11 +105,10 @@ public class Validator {
 
 	/**
 	 * Parse and Validate file.
-	 * 
-	 * @param File
-	 *            file
+	 *
+	 * @param file the file
 	 * @return String[][]
-	 * @throws ApplicationException
+	 * @throws ApplicationException the application exception
 	 */
 	private Boolean validateParseFile(File file) throws ApplicationException {
 		String[][] parts = new String[2][4];
@@ -161,9 +172,11 @@ public class Validator {
 
 	/**
 	 * Validate the file for emptiness.
-	 * 
-	 * @param void
+	 *
+	 * @param bufRdr the buf rdr
+	 * @param file the file
 	 * @return String[][]
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	private boolean validateEmptyFile(BufferedReader bufRdr, File file) throws IOException {
 		if (bufRdr.readLine() == null) {
