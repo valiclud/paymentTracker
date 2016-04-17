@@ -19,7 +19,7 @@ import processing.ProcessPayement;
  *
  */
 public class DisplayTimer {
-	
+
 	/** The toolkit. */
 	Toolkit toolkit;
 
@@ -29,7 +29,8 @@ public class DisplayTimer {
 	/**
 	 * Instantiates a new display timer.
 	 *
-	 * @param seconds the seconds
+	 * @param seconds
+	 *            the seconds
 	 */
 	public DisplayTimer(int seconds) {
 		toolkit = Toolkit.getDefaultToolkit();
@@ -43,16 +44,20 @@ public class DisplayTimer {
 	 * @author: Ludvik Valicek
 	 */
 	class RemindTask extends TimerTask {
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.util.TimerTask#run()
 		 */
 		public void run() {
 
 			Map<String, Payement> payements = ProcessPayement.getInstance().getPayements();
 
-			for (Payement payement : payements.values()) {
-				System.out.println(payement.getCurrencyName() + " " + payement.getCurrencyAmount());
+			synchronized (RemindTask.class) {
+				for (Payement payement : payements.values()) {
+					System.out.println(payement.getCurrencyName() + " " + payement.getCurrencyAmount());
+				}
 			}
 		}
 	}

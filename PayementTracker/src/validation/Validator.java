@@ -86,7 +86,7 @@ public class Validator {
 	 * @param currency the currency
 	 * @return boolean
 	 */
-	public synchronized boolean validateCurrency(String[] currency) {
+	public boolean validateCurrency(String[] currency) {
 		try {
 			if (Currency.getAvailableCurrencies().contains(Currency.getInstance(currency[0].trim())) == false)
 				return false;
