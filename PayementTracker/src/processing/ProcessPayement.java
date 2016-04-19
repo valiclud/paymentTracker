@@ -1,9 +1,7 @@
 
 package processing;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -25,6 +23,7 @@ public class ProcessPayement {
 	 * Instantiates a new process payement.
 	 */
 	private ProcessPayement() {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
