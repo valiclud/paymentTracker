@@ -58,22 +58,37 @@ public class Validator {
 	/**
 	 * Validate file.
 	 *
-	 * @param filename the filename
+	 * @param filename
+	 *            the filename
 	 * @return boolean
-	 * @throws ApplicationException the application exception
+	 * @throws ApplicationException
+	 *             the application exception
 	 */
-	public synchronized boolean validateFile(String filename) throws ApplicationException {
+	public synchronized File validateFile(String filename) throws ApplicationException {
 
 		File file = new File(filename);
 
 		if (!file.exists()) {
 			LOG.severe("File \"" + filename + "\" does not exist");
-			return false;
+			return null;
 		}
 
-		fileContent = this.validateParseFile(file);
+		return file;
+	}
 
-		if (fileContent == null) {
+	/**
+	 * Validate currency.
+	 *
+	 * @param currency
+	 *            the currency
+	 * @return boolean
+	 */
+	public boolean validateCurrency(String currency) {
+		try {
+			if (Currency.getAvailableCurrencies().contains(Currency.getInstance(currency)) == false)
+				return false;
+		} catch (IllegalArgumentException iax) {
+			LOG.severe("Wrong currency symbol entered");
 			return false;
 		}
 
@@ -81,21 +96,15 @@ public class Validator {
 	}
 
 	/**
-	 * Validate currency.
+	 * Validate amount.
 	 *
-	 * @param currency the currency
-	 * @return boolean
+	 * @param amount
+	 *            the amount
+	 * @return true, if successful
 	 */
-	public boolean validateCurrency(String[] currency) {
-		try {
-			if (Currency.getAvailableCurrencies().contains(Currency.getInstance(currency[0].trim())) == false)
-				return false;
-		} catch (IllegalArgumentException iax) {
-			LOG.severe("Wrong currency symbol entered");
-			return false;
-		}
+	public boolean validateAmount(String amount) {
 
-		if (currency[1].trim().matches("-?\\d+") == false) {
+		if (amount.matches("-?\\d+") == false) {
 			LOG.severe("Wrong amount format entered");
 			return false;
 		}
@@ -106,11 +115,13 @@ public class Validator {
 	/**
 	 * Parse and Validate file.
 	 *
-	 * @param file the file
+	 * @param file
+	 *            the file
 	 * @return String[][]
-	 * @throws ApplicationException the application exception
+	 * @throws ApplicationException
+	 *             the application exception
 	 */
-	private Boolean validateParseFile(File file) throws ApplicationException {
+	public Boolean validateParseFile(File file) throws ApplicationException {
 		String[][] parts = new String[2][4];
 		int row = 0;
 		int col = 0;
@@ -123,7 +134,7 @@ public class Validator {
 			StringTokenizer st = null;
 
 			if (!this.validateEmptyFile(bufRdr, file))
-				return null;
+				return false;
 
 			while ((line = bufRdr.readLine()) != null) {
 				st = new StringTokenizer(line, " ");
@@ -133,17 +144,11 @@ public class Validator {
 					col++;
 					if (col > 2) {
 						LOG.severe("There are more than 2 values on row: " + (row + 1) + " - non valid input file");
-						return null;
+						return false;
 					}
 				}
-				if (this.validateCurrency(parts[0]) == false) {
-					LOG.severe("Wrong values on row: " + (row + 1) + " - non valid input file");
-					return null;
-				}
 				row++;
-				payement = new Payement(parts[0][0], Integer.valueOf(parts[0][1]));
-				ProcessPayement.getInstance().processFromLine(payement);
-				payement = null;
+				ProcessPayement.getInstance().processFromLine((parts[0]));
 			}
 			bufRdr.close();
 		} catch (NumberFormatException ex) {
@@ -173,10 +178,13 @@ public class Validator {
 	/**
 	 * Validate the file for emptiness.
 	 *
-	 * @param bufRdr the buf rdr
-	 * @param file the file
+	 * @param bufRdr
+	 *            the buf rdr
+	 * @param file
+	 *            the file
 	 * @return String[][]
-	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
 	 */
 	private boolean validateEmptyFile(BufferedReader bufRdr, File file) throws IOException {
 		if (bufRdr.readLine() == null) {

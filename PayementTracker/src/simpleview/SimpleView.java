@@ -4,11 +4,9 @@ package simpleview;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-import dto.Payement;
 import exception.ApplicationException;
 import processing.ProcessPayement;
-import validation.Validator;
-	
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class SimpleView.
@@ -31,7 +29,6 @@ public class SimpleView {
 
 		String input = in.nextLine();
 
-		
 		try {
 
 			while (!input.equals("quit")) {
@@ -45,20 +42,11 @@ public class SimpleView {
 					break;
 
 				case (1):
-					if (Validator.getInstance().validateFile(currency[0]) == false) {
-						System.err.println("There is an error - input file \"" + currency[0] + "\" ");
-						break;
-					}
+					ProcessPayement.getInstance().processFromFile(currency[0].trim());
 					break;
 
 				case (2):
-					if (Validator.getInstance().validateCurrency(currency) == false) {
-						System.err.println("You entered wrong format of currency/amount \"" + currency[0] + " "
-								+ currency[1] + "\"");
-						break;
-					}
-					ProcessPayement.getInstance()
-							.processFromLine(new Payement(currency[0], Integer.valueOf(currency[1])));
+					ProcessPayement.getInstance().processFromLine(currency);
 					break;
 				default:
 					System.err.println("You entered wrong format - more than two words - of currency/amount \""
