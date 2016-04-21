@@ -1,0 +1,32 @@
+<project>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src" destdir="build/classes">
+    	 <classpath>
+    	 	<pathelement path="lib/log4j.jar"/>
+    	 	<pathelement path="lib/junit.jar"/>
+    	 </classpath>
+         </javac>
+    </target>
+
+    <target name="jar">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/PayementTracker.jar" basedir="build/classes">
+        	<zipgroupfileset dir="lib" includes="log4j.jar" />
+        	<zipgroupfileset dir="lib" includes="junit.jar" />
+        	<manifest>
+                <attribute name="Main-Class" value="main.Main"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run">
+        <java jar="build/jar/PayementTracker.jar" fork="true"/>
+    </target>
+
+</project>
