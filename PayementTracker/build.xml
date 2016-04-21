@@ -17,8 +17,8 @@
     <target name="jar">
         <mkdir dir="build/jar"/>
         <jar destfile="build/jar/PayementTracker.jar" basedir="build/classes">
-        	<zipgroupfileset dir="lib" includes="log4j.jar" />
-        	<zipgroupfileset dir="lib" includes="junit.jar" />
+        		<zipgroupfileset dir="lib" includes="log4j.jar" />
+        		<zipgroupfileset dir="lib" includes="junit.jar" />
         	<manifest>
                 <attribute name="Main-Class" value="main.Main"/>
             </manifest>
