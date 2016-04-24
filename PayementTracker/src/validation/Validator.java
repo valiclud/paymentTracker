@@ -64,7 +64,7 @@ public class Validator {
 	 * @throws ApplicationException
 	 *             the application exception
 	 */
-	public synchronized File validateFile(String filename) throws ApplicationException {
+	public File validateFile(String filename) throws ApplicationException {
 
 		File file = new File(filename);
 
